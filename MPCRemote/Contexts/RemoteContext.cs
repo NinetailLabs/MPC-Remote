@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using MPCRemote.Enumerations;
+using MPCRemote.Models;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VaraniumSharp.Shenfield;
@@ -18,6 +22,11 @@ namespace MPCRemote
         /// Command used to connect to the client
         /// </summary>
         public ICommand ConnectCommand => new RelayCommand(_ => Task.Run(ConnectToClient));
+
+        /// <summary>
+        /// Command to open a file in the client
+        /// </summary>
+        public ICommand OpenFileCommand => new RelayCommand(_ => Task.Run(OpenFileInClient));
 
         /// <summary>
         /// String to provide feedback to the UI
@@ -43,9 +52,9 @@ namespace MPCRemote
                     try
                     {
                         var data = reader.ReadLine();
-                        FeedbackString = data;
-                        
-                        }
+                        // TODO - Replace with logic to process the commands
+                        FeedbackString = data;                        
+                    }
                     catch (Exception)
                     {
                         break;
@@ -55,6 +64,46 @@ namespace MPCRemote
             catch(Exception exception)
             {
                 FeedbackString = exception.Message;
+            }
+        }
+
+        /// <summary>
+        /// Send a command to the client
+        /// </summary>
+        /// <param name="command">Command to send</param>
+        /// <param name="parameters">Parameters for the command</param>
+        private void SendComamndToClient(string command, string parameters)
+        {
+            try
+            {
+                var commandEntry = new MpcCommand
+                {
+                    Command = command,
+                    Parameters = parameters
+                };
+
+                var jsonString = JsonSerializer.Serialize(commandEntry);
+
+                _streamWriter.WriteLine(jsonString);
+                _streamWriter.Flush();
+            }
+            catch(Exception exception)
+            {
+                FeedbackString = exception.Message;
+            }
+        }
+
+        /// <summary>
+        /// Shows dialog requesting the file to open.
+        /// If a file is selected the file will be passed to the client
+        /// </summary>
+        private void OpenFileInClient()
+        {
+            var dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                // TODO - Handle sending of the file
+                SendComamndToClient(MpcCommands.OpenFile, dialog.FileName);
             }
         }
 
