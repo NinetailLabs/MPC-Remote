@@ -54,6 +54,16 @@ namespace MPCRemote
         public string Position { get; private set; }
 
         /// <summary>
+        /// The IP address of the server to connect to
+        /// </summary>
+        public string IpAddress { get; set; }
+
+        /// <summary>
+        /// The port to connect to
+        /// </summary>
+        public int Port { get; set; }
+
+        /// <summary>
         /// Connect to the client
         /// </summary>
         private void ConnectToClient()
