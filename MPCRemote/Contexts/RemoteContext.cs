@@ -18,6 +18,14 @@ namespace MPCRemote
     /// </summary>
     public sealed class RemoteContext : INotifyPropertyChanged
     {
+        public RemoteContext()
+        {
+            // TODO - For quick access
+            IpAddress = "127.0.0.1";
+            Port = 13580;
+            SetButtonState();
+        }
+
         /// <summary>
         /// Command used to connect to the client
         /// </summary>
@@ -27,6 +35,8 @@ namespace MPCRemote
         /// Command to open a file in the client
         /// </summary>
         public ICommand OpenFileCommand => new RelayCommand(_ => Task.Run(OpenFileInClient));
+
+        public ICommand NoParameterCommand => new RelayCommand(o => Task.Run(() => SendComamndToClient(o.ToString(), string.Empty)));
 
         /// <summary>
         /// String to provide feedback to the UI
@@ -56,12 +66,43 @@ namespace MPCRemote
         /// <summary>
         /// The IP address of the server to connect to
         /// </summary>
-        public string IpAddress { get; set; }
+        public string IpAddress
+        {
+            get => _ipAddress;
+            set
+            {
+                _ipAddress = value;
+                SetButtonState();
+            }
+        }
 
         /// <summary>
         /// The port to connect to
         /// </summary>
-        public int Port { get; set; }
+        public int? Port 
+        {
+            get => _port;
+            set
+            {
+                _port = value;
+                SetButtonState();
+            }
+        }
+
+        /// <summary>
+        /// Indicate if the connect button should be enabled
+        /// </summary>
+        public bool EnableConnectButton { get; private set; }
+
+        /// <summary>
+        /// Sets the state of the buttons
+        /// </summary>
+        private void SetButtonState()
+        {
+            EnableConnectButton = !string.IsNullOrEmpty(IpAddress)
+                && Port != null
+                && !IsConnected;
+        }
 
         /// <summary>
         /// Connect to the client
@@ -70,7 +111,8 @@ namespace MPCRemote
         {
             try
             {
-                var serverEndpoint = new IPEndPoint(_ipAddress, _port);
+                var ipAddrress = IPAddress.Parse(IpAddress);
+                var serverEndpoint = new IPEndPoint(ipAddrress, Port.Value);
                 _server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _server.Connect(serverEndpoint);
                 NetworkStream nStream = new NetworkStream(_server);
@@ -107,6 +149,7 @@ namespace MPCRemote
             {
                 case "Connection":
                     IsConnected = command.Parameters.Connected;
+                    SetButtonState();
                     break;
                 case "Status":
                     HandleStatus(command);
@@ -185,14 +228,14 @@ namespace MPCRemote
         private StreamWriter _streamWriter;
 
         /// <summary>
-        /// Temporary placeholder for storing the IPAddress to use for connecting to the server
+        /// Backing variable for <see cref="IPAddress"/>
         /// </summary>
-        private IPAddress _ipAddress = IPAddress.Parse("127.0.0.1");
+        private string _ipAddress;
 
-        /// <summary>
-        /// Temporary placeholder for storing the port used to connect to the server
+                /// <summary>
+        /// Backing variable for <see cref="Port"/>
         /// </summary>
-        private int _port = 13580;
+        private int? _port;
 
         /// <summary>
         /// Occurs when a property is changed
