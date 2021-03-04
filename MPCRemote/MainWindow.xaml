@@ -10,24 +10,65 @@
         Height="450" 
         Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
         <Button 
             Content="Connect"
             Command="{Binding Path=ConnectCommand}"
+            Grid.Row="0"
             HorizontalAlignment="Left" 
             Margin="10,10,0,0" 
             VerticalAlignment="Top"/>
+
+        <Label
+                Content="File"
+                Grid.Row="1"
+                Margin="10,10,0,0"/>
+        <Label
+                Content="{Binding Path=File}"
+                Grid.Row="1"
+                Margin="40,10,0,0"/>
+
+        <Grid
+            Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="175" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Content="State"
+                Grid.Column="0"
+                Margin="10,10,0,0"/>
+            <Label
+                Content="{Binding Path=PlayerState}"
+                Grid.Column="0"
+                Margin="40,10,0,0"/>
+
+            <Label
+                Content="Position"
+                Grid.Column="1"
+                Margin="10,10,0,0"/>
+            <Label
+                Content="{Binding Path=Position}"
+                Grid.Column="1"
+                Margin="65,10,0,0"/>
+
+        </Grid>
         
+        
+
         <Button
             Content="Open File" 
             Command="{Binding Path=OpenFileCommand}"
+            Grid.Row="3"
             HorizontalAlignment="Left" 
-            Margin="85,10,0,0"
-            VerticalAlignment="Top"/>
-        
-        <Label
-            Content="{Binding Path=FeedbackString}" 
-            HorizontalAlignment="Left" 
-            Margin="10,50,0,0"
+            Margin="10,10,0,0"
             VerticalAlignment="Top"/>
 
 

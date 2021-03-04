@@ -34,6 +34,26 @@ namespace MPCRemote
         public string FeedbackString { get; private set; }
 
         /// <summary>
+        /// Indicate if the client is connected or not
+        /// </summary>
+        public bool IsConnected { get; private set; }
+
+        /// <summary>
+        /// Current file open in MPC
+        /// </summary>
+        public string File { get; private set; }
+
+        /// <summary>
+        /// The current MPC status
+        /// </summary>
+        public string PlayerState { get; private set; }
+
+        /// <summary>
+        /// The current playback position
+        /// </summary>
+        public string Position { get; private set; }
+
+        /// <summary>
         /// Connect to the client
         /// </summary>
         private void ConnectToClient()
@@ -52,18 +72,55 @@ namespace MPCRemote
                     try
                     {
                         var data = reader.ReadLine();
-                        // TODO - Replace with logic to process the commands
-                        FeedbackString = data;                        
+                        var command = JsonSerializer.Deserialize<MpcReceiveCommand>(data);
+                        HandleCommand(command);
                     }
-                    catch (Exception)
+                    catch (Exception exception)
                     {
-                        break;
+                        // TODO - Log and feed back
                     }
                 }
             }
             catch(Exception exception)
             {
                 FeedbackString = exception.Message;
+            }
+        }
+
+        /// <summary>
+        /// Handle commands being returned from MPC
+        /// </summary>
+        /// <param name="command"></param>
+        private void HandleCommand(MpcReceiveCommand command)
+        {
+            switch(command.Command)
+            {
+                case "Connection":
+                    IsConnected = command.Parameters.Connected;
+                    break;
+                case "Status":
+                    HandleStatus(command);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Handle the status response
+        /// </summary>
+        /// <param name="command">Command containing the status response</param>
+        private void HandleStatus(MpcReceiveCommand command)
+        {
+            var parameters = command.Parameters;
+            File = parameters.File;
+            PlayerState = parameters.State;
+
+            if(long.TryParse(parameters.Position, out var position) && long.TryParse(parameters.Duration, out var duration))
+            {
+                var positionSpan = TimeSpan.FromMilliseconds(position);
+                var durationSpan = TimeSpan.FromMilliseconds(duration);
+                Position = $"{positionSpan.Hours:00}:{positionSpan.Minutes:00}:{positionSpan.Seconds:00}\\{durationSpan.Hours:00}:{durationSpan.Minutes:00}:{durationSpan.Seconds:00}";
             }
         }
 

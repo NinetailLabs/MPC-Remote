@@ -1,9 +1,6 @@
 ﻿namespace MPCRemote.Models
 {
-    /// <summary>
-    /// Class used to send commands from MPC
-    /// </summary>
-    public class MpcCommand
+    public class MpcReceiveCommand
     {
         /// <summary>
         /// The command to execute
@@ -13,6 +10,6 @@
         /// <summary>
         /// The parameters for the command
         /// </summary>
-        public string Parameters { get; set; }
+        public StatusParameter Parameters { get; set; }
     }
 }
