@@ -15,6 +15,7 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <Grid
@@ -57,11 +58,11 @@
         <Label
                 Content="File"
                 Grid.Row="1"
-                Margin="10,10,0,0"/>
+                Margin="10,0,0,0"/>
         <Label
                 Content="{Binding Path=File}"
                 Grid.Row="1"
-                Margin="40,10,0,0"/>
+                Margin="40,0,0,0"/>
 
         <Grid
             Grid.Row="2">
@@ -73,20 +74,20 @@
             <Label
                 Content="State"
                 Grid.Column="0"
-                Margin="10,10,0,0"/>
+                Margin="10,0,0,0"/>
             <Label
                 Content="{Binding Path=PlayerState}"
                 Grid.Column="0"
-                Margin="50,10,0,0"/>
+                Margin="50,0,0,0"/>
 
             <Label
                 Content="Position"
                 Grid.Column="1"
-                Margin="10,10,0,0"/>
+                Margin="10,0,0,0"/>
             <Label
                 Content="{Binding Path=Position}"
                 Grid.Column="1"
-                Margin="65,10,0,0"/>
+                Margin="65,0,0,0"/>
 
         </Grid>
 
@@ -106,6 +107,7 @@
                 Command="{Binding Path=OpenFileCommand}"
                 Grid.Column="0"
                 HorizontalAlignment="Left" 
+                IsEnabled="{Binding Path=IsConnected}"
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="80" />
@@ -116,6 +118,7 @@
                 CommandParameter="Play"
                 Grid.Column="1"
                 HorizontalAlignment="Left" 
+                IsEnabled="{Binding Path=EnablePlay}"
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="80" />
@@ -126,6 +129,7 @@
                 CommandParameter="Pause"
                 Grid.Column="2"
                 HorizontalAlignment="Left" 
+                IsEnabled="{Binding Path=EnablePause}"
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="80" />
@@ -136,11 +140,18 @@
                 CommandParameter="Stop"
                 Grid.Column="3"
                 HorizontalAlignment="Left" 
+                IsEnabled="{Binding Path=EnableStop}"
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="80" />
             
-        </Grid>      
-        
+        </Grid>
+
+        <TextBlock
+            Grid.Row="4"
+            Margin="10,0,0,0"
+            Text="{Binding Path=FeedbackString}"
+            />
+
     </Grid>
 </Window>

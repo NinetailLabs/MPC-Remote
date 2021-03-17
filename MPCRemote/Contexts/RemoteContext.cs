@@ -24,6 +24,7 @@ namespace MPCRemote
             IpAddress = "127.0.0.1";
             Port = 13580;
             SetButtonState();
+            FeedbackString = string.Empty;
         }
 
         /// <summary>
@@ -64,6 +65,21 @@ namespace MPCRemote
         public string Position { get; private set; }
 
         /// <summary>
+        /// Enable the Play button
+        /// </summary>
+        public bool EnablePlay { get; private set; }
+
+        /// <summary>
+        /// Enable the Stop button
+        /// </summary>
+        public bool EnableStop { get; private set; }
+
+        /// <summary>
+        /// Enable the pause button
+        /// </summary>
+        public bool EnablePause { get; private set; }
+
+        /// <summary>
         /// The IP address of the server to connect to
         /// </summary>
         public string IpAddress
@@ -102,6 +118,18 @@ namespace MPCRemote
             EnableConnectButton = !string.IsNullOrEmpty(IpAddress)
                 && Port != null
                 && !IsConnected;
+
+            EnablePlay = IsConnected
+                && PlayerState != "Loading"
+                && PlayerState != "Playing"
+                && PlayerState != "Closed";
+
+            EnablePause = IsConnected
+                && PlayerState == "Playing";
+
+            EnableStop = IsConnected
+                && (PlayerState == "Playing"
+                    || PlayerState == "Paused");
         }
 
         /// <summary>
@@ -124,12 +152,29 @@ namespace MPCRemote
                     try
                     {
                         var data = reader.ReadLine();
-                        var command = JsonSerializer.Deserialize<MpcReceiveCommand>(data);
-                        HandleCommand(command);
+                        Task.Run(() =>
+                        {
+                            var command = JsonSerializer.Deserialize<MpcReceiveCommand>(data);
+                            HandleCommand(command);
+                        });
                     }
                     catch (Exception exception)
                     {
+                        if(exception.InnerException is SocketException)
+                        {
+                            if (exception.InnerException.Message.Contains("closed", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                FeedbackString += "Connection closed by host";
+                                IsConnected = false;
+                                File = string.Empty;
+                                Position = string.Empty;
+                                PlayerState = string.Empty;
+                                break;
+                            }
+                        }
+
                         // TODO - Log and feed back
+                        FeedbackString += $"{exception.Message}\r\n";
                     }
                 }
             }
@@ -150,9 +195,16 @@ namespace MPCRemote
                 case "Connection":
                     IsConnected = command.Parameters.Connected;
                     SetButtonState();
+                    if(IsConnected)
+                    {
+                        SendComamndToClient("GetCurrentStatus", string.Empty);
+                    }
                     break;
-                case "Status":
-                    HandleStatus(command);
+                case "PlaybackStateChange":
+                    HandlePlaybackStateChange(command);
+                    break;
+                case "Position":
+                    HandlePosition(command);
                     break;
                 default:
                     break;
@@ -163,11 +215,9 @@ namespace MPCRemote
         /// Handle the status response
         /// </summary>
         /// <param name="command">Command containing the status response</param>
-        private void HandleStatus(MpcReceiveCommand command)
+        private void HandlePosition(MpcReceiveCommand command)
         {
             var parameters = command.Parameters;
-            File = parameters.File;
-            PlayerState = parameters.State;
 
             if(long.TryParse(parameters.Position, out var position) && long.TryParse(parameters.Duration, out var duration))
             {
@@ -175,6 +225,18 @@ namespace MPCRemote
                 var durationSpan = TimeSpan.FromMilliseconds(duration);
                 Position = $"{positionSpan.Hours:00}:{positionSpan.Minutes:00}:{positionSpan.Seconds:00}\\{durationSpan.Hours:00}:{durationSpan.Minutes:00}:{durationSpan.Seconds:00}";
             }
+        }
+
+        /// <summary>
+        /// Handle the playback state change command
+        /// </summary>
+        /// <param name="command">Command containing the state change response</param>
+        private void HandlePlaybackStateChange(MpcReceiveCommand command)
+        {
+            var parameters = command.Parameters;
+            File = parameters.File;
+            PlayerState = parameters.State;
+            SetButtonState();
         }
 
         /// <summary>
@@ -199,7 +261,7 @@ namespace MPCRemote
             }
             catch(Exception exception)
             {
-                FeedbackString = exception.Message;
+                FeedbackString += $"{exception.Message}\r\n";
             }
         }
 
