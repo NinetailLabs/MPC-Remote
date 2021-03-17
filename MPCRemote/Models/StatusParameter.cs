@@ -29,5 +29,10 @@
         /// Indicate if the connection to the player has been opened
         /// </summary>
         public bool Connected { get; set; }
+
+        /// <summary>
+        /// The API version
+        /// </summary>
+        public string Version { get; set; }
     }
 }

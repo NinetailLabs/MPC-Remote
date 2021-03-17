@@ -25,12 +25,18 @@ namespace MPCRemote
             Port = 13580;
             SetButtonState();
             FeedbackString = string.Empty;
+            ApiVersion = "0.0.0";
         }
 
         /// <summary>
         /// Command used to connect to the client
         /// </summary>
         public ICommand ConnectCommand => new RelayCommand(_ => Task.Run(ConnectToClient));
+
+        /// <summary>
+        /// Command used to disconnect the client
+        /// </summary>
+        public ICommand DisconnectCommand => new RelayCommand(_ => Task.Run(DisconnectFromHost));
 
         /// <summary>
         /// Command to open a file in the client
@@ -78,6 +84,11 @@ namespace MPCRemote
         /// Enable the pause button
         /// </summary>
         public bool EnablePause { get; private set; }
+
+        /// <summary>
+        /// The API version that is being connected to
+        /// </summary>
+        public string ApiVersion { get; private set; }
 
         /// <summary>
         /// The IP address of the server to connect to
@@ -158,21 +169,23 @@ namespace MPCRemote
                             HandleCommand(command);
                         });
                     }
+                    catch(Exception exception) when (exception.InnerException is SocketException)
+                    {
+                        if (exception.InnerException.Message.Contains("closed", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            FeedbackString += "Connection closed by host";
+                            CleanupConnection();
+                            break;
+                        }
+                    }
+                    catch (Exception exception) when (exception.InnerException is ObjectDisposedException)
+                    {
+                        FeedbackString += "Connection closed\r\n";
+                        CleanupConnection();
+                        return;
+                    }
                     catch (Exception exception)
                     {
-                        if(exception.InnerException is SocketException)
-                        {
-                            if (exception.InnerException.Message.Contains("closed", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                FeedbackString += "Connection closed by host";
-                                IsConnected = false;
-                                File = string.Empty;
-                                Position = string.Empty;
-                                PlayerState = string.Empty;
-                                break;
-                            }
-                        }
-
                         // TODO - Log and feed back
                         FeedbackString += $"{exception.Message}\r\n";
                     }
@@ -182,6 +195,28 @@ namespace MPCRemote
             {
                 FeedbackString = exception.Message;
             }
+        }
+
+        /// <summary>
+        /// Clean up variables when the connection is closed
+        /// </summary>
+        private void CleanupConnection()
+        {
+            IsConnected = false;
+            File = string.Empty;
+            Position = string.Empty;
+            PlayerState = string.Empty;
+            ApiVersion = "0.0.0";
+            SetButtonState();
+        }
+
+        /// <summary>
+        /// Disconnect from the host
+        /// </summary>
+        private void DisconnectFromHost()
+        {
+            SendComamndToClient("OSD", "Remote disconnected");
+            _server.Close();
         }
 
         /// <summary>
@@ -197,7 +232,7 @@ namespace MPCRemote
                     SetButtonState();
                     if(IsConnected)
                     {
-                        SendComamndToClient("GetCurrentStatus", string.Empty);
+                        SendComamndToClient("GetAPIVersion", string.Empty);
                     }
                     break;
                 case "PlaybackStateChange":
@@ -205,6 +240,10 @@ namespace MPCRemote
                     break;
                 case "Position":
                     HandlePosition(command);
+                    break;
+                case "APIVersion":
+                    ApiVersion = command.Parameters.Version;
+                    SendComamndToClient("GetCurrentStatus", string.Empty);
                     break;
                 default:
                     break;
