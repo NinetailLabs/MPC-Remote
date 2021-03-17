@@ -118,6 +118,7 @@
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
@@ -163,7 +164,17 @@
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="80" />
-            
+            <Button
+                Content="{Binding Path=FullscreenText}" 
+                Command="{Binding Path=NoParameterCommand}"
+                CommandParameter="ToggleFullscreen"
+                Grid.Column="4"
+                HorizontalAlignment="Left" 
+                IsEnabled="{Binding Path=IsConnected}"
+                Margin="10,10,0,0"
+                VerticalAlignment="Top"
+                Width="80" />
+
         </Grid>
 
         <TextBlock

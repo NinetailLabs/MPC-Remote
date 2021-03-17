@@ -26,6 +26,7 @@ namespace MPCRemote
             SetButtonState();
             FeedbackString = string.Empty;
             ApiVersion = "0.0.0";
+            FullscreenText = "Fullscreen";
         }
 
         /// <summary>
@@ -89,6 +90,11 @@ namespace MPCRemote
         /// The API version that is being connected to
         /// </summary>
         public string ApiVersion { get; private set; }
+
+        /// <summary>
+        /// Text for the fullscreen button
+        /// </summary>
+        public string FullscreenText { get; private set; }
 
         /// <summary>
         /// The IP address of the server to connect to
@@ -244,6 +250,11 @@ namespace MPCRemote
                 case "APIVersion":
                     ApiVersion = command.Parameters.Version;
                     SendComamndToClient("GetCurrentStatus", string.Empty);
+                    break;
+                case "Fullscreen":
+                    FullscreenText = command.Parameters.IsFullscreen
+                        ? "Window"
+                        : "Fullscreen";
                     break;
                 default:
                     break;

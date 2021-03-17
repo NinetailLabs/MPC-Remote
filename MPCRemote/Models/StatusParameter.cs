@@ -34,5 +34,10 @@
         /// The API version
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// Indicate if the player is in fullscreen mode or not
+        /// </summary>
+        public bool IsFullscreen { get; set; }
     }
 }
