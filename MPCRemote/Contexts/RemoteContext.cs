@@ -221,14 +221,13 @@ namespace MPCRemote
                     }
                     catch (Exception exception)
                     {
-                        // TODO - Log and feed back
                         FeedbackString += $"{exception.Message}\r\n";
                     }
                 }
             }
             catch(Exception exception)
             {
-                FeedbackString = exception.Message;
+                FeedbackString += $"{exception.Message}\r\n";
             }
         }
 
