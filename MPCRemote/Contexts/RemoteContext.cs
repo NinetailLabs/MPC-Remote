@@ -27,6 +27,7 @@ namespace MPCRemote
             FeedbackString = string.Empty;
             ApiVersion = "0.0.0";
             FullscreenText = "Fullscreen";
+            DurationInMilliseconds = 100;
         }
 
         /// <summary>
@@ -87,6 +88,11 @@ namespace MPCRemote
         public bool EnablePause { get; private set; }
 
         /// <summary>
+        /// Enable the progress bar
+        /// </summary>
+        public bool EnableProgressBar { get; private set; }
+
+        /// <summary>
         /// The API version that is being connected to
         /// </summary>
         public string ApiVersion { get; private set; }
@@ -95,6 +101,16 @@ namespace MPCRemote
         /// Text for the fullscreen button
         /// </summary>
         public string FullscreenText { get; private set; }
+
+        /// <summary>
+        /// The current playback position
+        /// </summary>
+        public long PositionInMilliseconds { get; set; }
+
+        /// <summary>
+        /// The duration of the file
+        /// </summary>
+        public long DurationInMilliseconds { get; set; }
 
         /// <summary>
         /// The IP address of the server to connect to
@@ -128,6 +144,15 @@ namespace MPCRemote
         public bool EnableConnectButton { get; private set; }
 
         /// <summary>
+        /// Request the media player to seek to the specified position
+        /// </summary>
+        /// <param name="newPosition">The position to seek to</param>
+        public void SeekToPosition(long newPosition)
+        {
+            SendComamndToClient("SeekTo", newPosition.ToString());
+        }
+
+        /// <summary>
         /// Sets the state of the buttons
         /// </summary>
         private void SetButtonState()
@@ -145,6 +170,10 @@ namespace MPCRemote
                 && PlayerState == "Playing";
 
             EnableStop = IsConnected
+                && (PlayerState == "Playing"
+                    || PlayerState == "Paused");
+
+            EnableProgressBar = IsConnected
                 && (PlayerState == "Playing"
                     || PlayerState == "Paused");
         }
@@ -213,6 +242,7 @@ namespace MPCRemote
             Position = string.Empty;
             PlayerState = string.Empty;
             ApiVersion = "0.0.0";
+            DurationInMilliseconds = 100;
             SetButtonState();
         }
 
@@ -274,6 +304,10 @@ namespace MPCRemote
                 var positionSpan = TimeSpan.FromMilliseconds(position);
                 var durationSpan = TimeSpan.FromMilliseconds(duration);
                 Position = $"{positionSpan.Hours:00}:{positionSpan.Minutes:00}:{positionSpan.Seconds:00}\\{durationSpan.Hours:00}:{durationSpan.Minutes:00}:{durationSpan.Seconds:00}";
+                
+                var newProgress = (int)(Math.Round((position / (decimal)duration) * 100, 0));
+                DurationInMilliseconds = duration;
+                PositionInMilliseconds = position;
             }
         }
 
