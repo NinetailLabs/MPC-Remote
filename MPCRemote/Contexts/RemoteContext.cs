@@ -2,12 +2,14 @@
 using MPCRemote.Enumerations;
 using MPCRemote.Models;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using VaraniumSharp.Shenfield;
 
@@ -28,7 +30,15 @@ namespace MPCRemote
             ApiVersion = "0.0.0";
             FullscreenText = "Fullscreen";
             DurationInMilliseconds = 100;
+
+            Playlist = new ObservableCollection<PlaylistEntry>();
+            BindingOperations.EnableCollectionSynchronization(Playlist, _playlistLock);
         }
+
+        /// <summary>
+        /// Playlist
+        /// </summary>
+        public ObservableCollection<PlaylistEntry> Playlist { get; }
 
         /// <summary>
         /// Command used to connect to the client
@@ -285,8 +295,32 @@ namespace MPCRemote
                         ? "Window"
                         : "Fullscreen";
                     break;
+                case "Playlist":
+                    HandlePlaylistChange(command);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Handle the update of the playlist when it changes
+        /// </summary>
+        /// <param name="command">Command containing the playlist details</param>
+        private void HandlePlaylistChange(MpcReceiveCommand command)
+        {
+            lock(_playlistLock)
+            {
+                Playlist.Clear();
+
+                foreach(var item in command.Parameters.Playlist)
+                {
+                    var entry = new PlaylistEntry
+                    {
+                        Filename = item
+                    };
+                    Playlist.Add(entry);
+                }
             }
         }
 
@@ -381,6 +415,11 @@ namespace MPCRemote
         /// Backing variable for <see cref="Port"/>
         /// </summary>
         private int? _port;
+
+        /// <summary>
+        /// Object used to lock access to the Playlist
+        /// </summary>
+        private readonly object _playlistLock = new object();
 
         /// <summary>
         /// Occurs when a property is changed

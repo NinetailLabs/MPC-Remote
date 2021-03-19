@@ -1,4 +1,6 @@
-﻿namespace MPCRemote.Models
+﻿using System.Collections.Generic;
+
+namespace MPCRemote.Models
 {
     /// <summary>
     /// Parameters returned in a Status command
@@ -39,5 +41,10 @@
         /// Indicate if the player is in fullscreen mode or not
         /// </summary>
         public bool IsFullscreen { get; set; }
+
+        /// <summary>
+        /// The playlist files
+        /// </summary>
+        public List<string> Playlist { get; set; }
     }
 }

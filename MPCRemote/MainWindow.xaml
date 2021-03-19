@@ -8,195 +8,245 @@
         mc:Ignorable="d"
         Title="MPC-HC Remote" 
         Height="450" 
-        Width="800">
+        Width="1200">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="28" />
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
 
-        <Grid
-            Grid.Row="0">
+        <Border
+            BorderBrush="AliceBlue"
+            BorderThickness="1"
+            Grid.Column="0"
+            Margin="10">
+            <Grid>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="28" />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-            <Label
-                Content="IP Address:"
-                Grid.Column="0"
-                Margin="10,20,10,10"/>
-            <TextBox
-                Text="{Binding Path=IpAddress}"
-                Margin="85,15,10,13" />
+                <Grid
+                Grid.Row="0">
 
-            <Label
-                Content="Port:"
-                Grid.Column="1"
-                Margin="10,20,10,10"/>
-            <TextBox
-                Grid.Column="1"
-                Margin="50,15,10,13"
-                Text="{Binding Path=Port}" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label
+                    Content="IP Address:"
+                    Grid.Column="0"
+                    Margin="10,20,10,10"/>
+                    <TextBox
+                    Text="{Binding Path=IpAddress}"
+                    Margin="85,15,10,13" />
+
+                    <Label
+                    Content="Port:"
+                    Grid.Column="1"
+                    Margin="10,20,10,10"/>
+                    <TextBox
+                    Grid.Column="1"
+                    Margin="50,15,10,13"
+                    Text="{Binding Path=Port}" />
 
 
-            <Button 
-                Content="Connect"
-                Command="{Binding Path=ConnectCommand}"
-                Grid.Column="2"
-                HorizontalAlignment="Left" 
-                IsEnabled="{Binding Path=EnableConnectButton}"
-                Margin="10,15,0,0" 
-                VerticalAlignment="Top"/>
+                    <Button 
+                    Content="Connect"
+                    Command="{Binding Path=ConnectCommand}"
+                    Grid.Column="2"
+                    HorizontalAlignment="Left" 
+                    IsEnabled="{Binding Path=EnableConnectButton}"
+                    Margin="10,15,0,0" 
+                    VerticalAlignment="Top"/>
 
-            <Button 
-                Content="Disconnect"
-                Command="{Binding Path=DisconnectCommand}"
-                Grid.Column="2"
-                HorizontalAlignment="Left" 
-                IsEnabled="{Binding Path=IsConnected}"
-                Margin="85,15,0,0" 
-                VerticalAlignment="Top"/>
+                    <Button 
+                    Content="Disconnect"
+                    Command="{Binding Path=DisconnectCommand}"
+                    Grid.Column="2"
+                    HorizontalAlignment="Left" 
+                    IsEnabled="{Binding Path=IsConnected}"
+                    Margin="85,15,0,0" 
+                    VerticalAlignment="Top"/>
 
-            <Label
-                Content="API v"
-                Grid.Column="3"
-                Margin="10,20,0,0"/>
-            <Label
-                Content="{Binding Path=ApiVersion}"
-                Grid.Column="3"
-                Margin="42,20,0,0"/>
-        </Grid>
+                    <Label
+                    Content="API v"
+                    Grid.Column="3"
+                    Margin="10,20,0,0"/>
+                    <Label
+                    Content="{Binding Path=ApiVersion}"
+                    Grid.Column="3"
+                    Margin="42,20,0,0"/>
+                </Grid>
 
-        <Label
-                Content="File"
-                Grid.Row="1"
-                Margin="10,0,0,0"/>
-        <Label
-                Content="{Binding Path=File}"
-                Grid.Row="1"
-                Margin="40,0,0,0"/>
+                <Label
+                    Content="File"
+                    Grid.Row="1"
+                    Margin="10,0,0,0"/>
+                <Label
+                    Content="{Binding Path=File}"
+                    Grid.Row="1"
+                    Margin="40,0,0,0"/>
 
-        <Grid
-            Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+                <Grid
+                Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
 
-            <Label
-                Content="State"
-                Grid.Column="0"
-                Margin="10,0,0,0"/>
-            <Label
-                Content="{Binding Path=PlayerState}"
-                Grid.Column="0"
-                Margin="50,0,0,0"/>
+                    <Label
+                    Content="State"
+                    Grid.Column="0"
+                    Margin="10,0,0,0"/>
+                    <Label
+                    Content="{Binding Path=PlayerState}"
+                    Grid.Column="0"
+                    Margin="50,0,0,0"/>
 
-            <Label
-                Content="Position"
-                Grid.Column="1"
-                Margin="10,0,0,0"/>
-            <Label
-                Content="{Binding Path=Position}"
-                Grid.Column="1"
-                Margin="65,0,0,0"/>
+                    <Label
+                    Content="Position"
+                    Grid.Column="1"
+                    Margin="10,0,0,0"/>
+                    <Label
+                    Content="{Binding Path=Position}"
+                    Grid.Column="1"
+                    Margin="65,0,0,0"/>
 
-        </Grid>
+                </Grid>
 
-        <Slider 
-            Grid.Row="2"
-            Grid.RowSpan="2"
-            HorizontalAlignment="Right" 
-            IsEnabled="{Binding Path=EnableProgressBar}"
-            Margin="0,22,10,0"
-            Maximum="{Binding Path=DurationInMilliseconds}"
-            Value="{Binding Path=PositionInMilliseconds}"
-            PreviewMouseDown="Slider_PreviewMouseDown"
-            PreviewMouseUp="Slider_PreviewMouseUp"
-            ValueChanged="Slider_ValueChanged"
-            VerticalAlignment="Top" 
-            Width="780" />
+                <Slider 
+                Grid.Row="2"
+                Grid.RowSpan="2"
+                HorizontalAlignment="Right" 
+                IsEnabled="{Binding Path=EnableProgressBar}"
+                Margin="0,22,10,0"
+                Maximum="{Binding Path=DurationInMilliseconds}"
+                Value="{Binding Path=PositionInMilliseconds}"
+                PreviewMouseDown="Slider_PreviewMouseDown"
+                PreviewMouseUp="Slider_PreviewMouseUp"
+                ValueChanged="Slider_ValueChanged"
+                VerticalAlignment="Top" 
+                Width="780" Height="31" />
 
-        <Grid
-            Grid.Row="4"
-            Margin="0,10">
+                <Grid
+                Grid.Row="4"
+                Margin="0,10,0,10">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
 
-            <Button
-                Content="Open File" 
-                Command="{Binding Path=OpenFileCommand}"
-                Grid.Column="0"
-                HorizontalAlignment="Left" 
-                IsEnabled="{Binding Path=IsConnected}"
-                Margin="10,10,0,0"
-                VerticalAlignment="Top"
-                Width="80" />
+                    <Button
+                        Content="Open File" 
+                        Command="{Binding Path=OpenFileCommand}"
+                        Grid.Column="0"
+                        HorizontalAlignment="Left" 
+                        IsEnabled="{Binding Path=IsConnected}"
+                        Margin="10,10,0,0"
+                        VerticalAlignment="Top"
+                        Width="80" />
 
-            <Button
-                Content="Play" 
-                Command="{Binding Path=NoParameterCommand}"
-                CommandParameter="Play"
-                Grid.Column="1"
-                HorizontalAlignment="Left" 
-                IsEnabled="{Binding Path=EnablePlay}"
-                Margin="10,10,0,0"
-                VerticalAlignment="Top"
-                Width="80" />
+                    <Button
+                        Content="Play" 
+                        Command="{Binding Path=NoParameterCommand}"
+                        CommandParameter="Play"
+                        Grid.Column="1"
+                        HorizontalAlignment="Left" 
+                        IsEnabled="{Binding Path=EnablePlay}"
+                        Margin="10,10,0,0"
+                        VerticalAlignment="Top"
+                        Width="80" />
 
-            <Button
-                Content="Pause" 
-                Command="{Binding Path=NoParameterCommand}"
-                CommandParameter="Pause"
-                Grid.Column="2"
-                HorizontalAlignment="Left" 
-                IsEnabled="{Binding Path=EnablePause}"
-                Margin="10,10,0,0"
-                VerticalAlignment="Top"
-                Width="80" />
+                    <Button
+                        Content="Pause" 
+                        Command="{Binding Path=NoParameterCommand}"
+                        CommandParameter="Pause"
+                        Grid.Column="2"
+                        HorizontalAlignment="Left" 
+                        IsEnabled="{Binding Path=EnablePause}"
+                        Margin="10,10,0,0"
+                        VerticalAlignment="Top"
+                        Width="80" />
 
-            <Button
-                Content="Stop" 
-                Command="{Binding Path=NoParameterCommand}"
-                CommandParameter="Stop"
-                Grid.Column="3"
-                HorizontalAlignment="Left" 
-                IsEnabled="{Binding Path=EnableStop}"
-                Margin="10,10,0,0"
-                VerticalAlignment="Top"
-                Width="80" />
-            <Button
-                Content="{Binding Path=FullscreenText}" 
-                Command="{Binding Path=NoParameterCommand}"
-                CommandParameter="ToggleFullscreen"
-                Grid.Column="4"
-                HorizontalAlignment="Left" 
-                IsEnabled="{Binding Path=IsConnected}"
-                Margin="10,10,0,0"
-                VerticalAlignment="Top"
-                Width="80" />
+                    <Button
+                        Content="Stop" 
+                        Command="{Binding Path=NoParameterCommand}"
+                        CommandParameter="Stop"
+                        Grid.Column="3"
+                        HorizontalAlignment="Left" 
+                        IsEnabled="{Binding Path=EnableStop}"
+                        Margin="10,10,0,0"
+                        VerticalAlignment="Top"
+                        Width="80" />
 
-        </Grid>
+                    <Button
+                        Content="{Binding Path=FullscreenText}" 
+                        Command="{Binding Path=NoParameterCommand}"
+                        CommandParameter="ToggleFullscreen"
+                        Grid.Column="4"
+                        HorizontalAlignment="Left" 
+                        IsEnabled="{Binding Path=IsConnected}"
+                        Margin="10,10,0,0"
+                        VerticalAlignment="Top"
+                        Width="80" />
 
-        <TextBlock
-            Grid.Row="5"
-            Margin="10,0,0,0"
-            Text="{Binding Path=FeedbackString}"
-            />
+                </Grid>
+
+                <TextBlock
+                    Grid.Row="4"
+                    Margin="10,148,0,0"
+                    Text="{Binding Path=FeedbackString}" Grid.RowSpan="2" />
+
+            </Grid>
+        </Border>
+
+        <Border
+            BorderBrush="AliceBlue"
+            BorderThickness="1"
+            Grid.Column="1"
+            Margin="0,10,10,10">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="48" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Button
+                    Content="Clear Playlist"
+                    Command="{Binding Path=NoParameterCommand}"
+                    CommandParameter="Playlist.Clear"
+                    Grid.Row="0"
+                    IsEnabled="{Binding Path=IsConnected}"
+                    Margin="10,0,0,0" />
+
+                <ListBox 
+                    ItemsSource="{Binding Path=Playlist}"
+                    Grid.Row="1">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Filename}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </Grid>
+            
+        </Border>
+
 
     </Grid>
 </Window>
