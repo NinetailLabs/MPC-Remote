@@ -14,5 +14,10 @@
         /// The parameters for the command
         /// </summary>
         public string Parameters { get; set; }
+
+        /// <summary>
+        /// The index of the entry
+        /// </summary>
+        public int Index { get; set; }
     }
 }

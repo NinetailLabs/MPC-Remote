@@ -233,9 +233,17 @@
                     IsEnabled="{Binding Path=IsConnected}"
                     Margin="10,0,0,0" />
 
+                <Button
+                    Content="Remove Item"
+                    Command="{Binding Path=RemoveEntryFromPlaylistCommand}"
+                    Grid.Row="0"
+                    IsEnabled="{Binding Path=EnableRemoveButton}"
+                    Margin="110,0,0,0" />
+
                 <ListBox 
                     ItemsSource="{Binding Path=Playlist}"
-                    Grid.Row="1">
+                    Grid.Row="1"
+                    SelectedItem="{Binding Path=SelectedEntry}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=Filename}" />

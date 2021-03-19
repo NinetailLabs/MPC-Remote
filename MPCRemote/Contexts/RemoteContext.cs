@@ -41,6 +41,19 @@ namespace MPCRemote
         public ObservableCollection<PlaylistEntry> Playlist { get; }
 
         /// <summary>
+        /// The entry the user has selected in the playlist
+        /// </summary>
+        public PlaylistEntry? SelectedEntry 
+        {
+            get => _selectedEntry;
+            set
+            {
+                _selectedEntry = value;
+                SetButtonState();
+            }
+        }
+
+        /// <summary>
         /// Command used to connect to the client
         /// </summary>
         public ICommand ConnectCommand => new RelayCommand(_ => Task.Run(ConnectToClient));
@@ -56,6 +69,11 @@ namespace MPCRemote
         public ICommand OpenFileCommand => new RelayCommand(_ => Task.Run(OpenFileInClient));
 
         public ICommand NoParameterCommand => new RelayCommand(o => Task.Run(() => SendComamndToClient(o.ToString(), string.Empty)));
+
+        /// <summary>
+        /// Command to request removal of an item from the playlist
+        /// </summary>
+        public ICommand RemoveEntryFromPlaylistCommand => new RelayCommand(_ => Task.Run(RemoveEntryFromPlaylist));
 
         /// <summary>
         /// String to provide feedback to the UI
@@ -101,6 +119,11 @@ namespace MPCRemote
         /// Enable the progress bar
         /// </summary>
         public bool EnableProgressBar { get; private set; }
+
+        /// <summary>
+        /// Indicate if the remove button should be enabled
+        /// </summary>
+        public bool EnableRemoveButton { get; private set; }
 
         /// <summary>
         /// The API version that is being connected to
@@ -186,6 +209,9 @@ namespace MPCRemote
             EnableProgressBar = IsConnected
                 && (PlayerState == "Playing"
                     || PlayerState == "Paused");
+
+            EnableRemoveButton = IsConnected
+                && SelectedEntry != null;
         }
 
         /// <summary>
@@ -239,6 +265,15 @@ namespace MPCRemote
             {
                 FeedbackString += $"{exception.Message}\r\n";
             }
+        }
+
+        /// <summary>
+        /// Remove the <see cref="SelectedEntry"/> from the playlist
+        /// </summary>
+        private void RemoveEntryFromPlaylist()
+        {
+            var index = Playlist.IndexOf(SelectedEntry);
+            SendComamndToClient("Playlist.RemoveEntry", string.Empty, index);
         }
 
         /// <summary>
@@ -361,14 +396,15 @@ namespace MPCRemote
         /// </summary>
         /// <param name="command">Command to send</param>
         /// <param name="parameters">Parameters for the command</param>
-        private void SendComamndToClient(string command, string parameters)
+        private void SendComamndToClient(string command, string parameters, int index = 0)
         {
             try
             {
                 var commandEntry = new MpcCommand
                 {
                     Command = command,
-                    Parameters = parameters
+                    Parameters = parameters,
+                    Index = index
                 };
 
                 var jsonString = JsonSerializer.Serialize(commandEntry);
@@ -420,6 +456,11 @@ namespace MPCRemote
         /// Object used to lock access to the Playlist
         /// </summary>
         private readonly object _playlistLock = new object();
+
+        /// <summary>
+        /// Backing variable for <see cref="SelectedEntry"/>
+        /// </summary>
+        private PlaylistEntry? _selectedEntry;
 
         /// <summary>
         /// Occurs when a property is changed
