@@ -512,6 +512,11 @@ namespace MPCRemote
                 var sourceIndex = Playlist.IndexOf(sourceData);
                 var targetIndex = Playlist.IndexOf(targetData);
 
+                if(sourceIndex < 0 || targetIndex < 0)
+                {
+                    return;
+                }
+
                 if (sourceData.Filename != targetData.Filename)
                 {
                     SendComamndToClient("Playlist.MoveEntry", string.Empty, sourceIndex, targetIndex);
