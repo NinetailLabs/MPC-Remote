@@ -186,7 +186,7 @@ namespace MPCRemote
         /// <param name="newPosition">The position to seek to</param>
         public void SeekToPosition(long newPosition)
         {
-            SendComamndToClient("SeekTo", newPosition.ToString());
+            SendComamndToClient("Player.SeekTo", newPosition.ToString());
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace MPCRemote
         /// </summary>
         private void DisconnectFromHost()
         {
-            SendComamndToClient("OSD", "Remote disconnected");
+            SendComamndToClient("Player.OSD", "Remote disconnected");
             _server.Close();
         }
 
@@ -321,25 +321,25 @@ namespace MPCRemote
         {
             switch(command.Command)
             {
-                case "Connection":
+                case "API.Connection":
                     IsConnected = command.Parameters.Connected;
                     SetButtonState();
                     if(IsConnected)
                     {
-                        SendComamndToClient("GetAPIVersion", string.Empty);
+                        SendComamndToClient("API.GetVersion", string.Empty);
                     }
                     break;
-                case "PlaybackStateChange":
+                case "Player.StateChanged":
                     HandlePlaybackStateChange(command);
                     break;
-                case "Position":
+                case "Player.Position":
                     HandlePosition(command);
                     break;
-                case "APIVersion":
+                case "API.Version":
                     ApiVersion = command.Parameters.Version;
-                    SendComamndToClient("GetCurrentStatus", string.Empty);
+                    SendComamndToClient("Player.GetStatus", string.Empty);
                     break;
-                case "Fullscreen":
+                case "Player.Fullscreen":
                     FullscreenText = command.Parameters.IsFullscreen
                         ? "Window"
                         : "Fullscreen";

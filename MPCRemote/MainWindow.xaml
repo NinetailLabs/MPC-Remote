@@ -163,7 +163,7 @@
                     <Button
                         Content="Play" 
                         Command="{Binding Path=NoParameterCommand}"
-                        CommandParameter="Play"
+                        CommandParameter="Player.Play"
                         Grid.Column="1"
                         HorizontalAlignment="Left" 
                         IsEnabled="{Binding Path=EnablePlay}"
@@ -174,7 +174,7 @@
                     <Button
                         Content="Pause" 
                         Command="{Binding Path=NoParameterCommand}"
-                        CommandParameter="Pause"
+                        CommandParameter="Player.Pause"
                         Grid.Column="2"
                         HorizontalAlignment="Left" 
                         IsEnabled="{Binding Path=EnablePause}"
@@ -185,7 +185,7 @@
                     <Button
                         Content="Stop" 
                         Command="{Binding Path=NoParameterCommand}"
-                        CommandParameter="Stop"
+                        CommandParameter="Player.Stop"
                         Grid.Column="3"
                         HorizontalAlignment="Left" 
                         IsEnabled="{Binding Path=EnableStop}"
@@ -196,7 +196,7 @@
                     <Button
                         Content="{Binding Path=FullscreenText}" 
                         Command="{Binding Path=NoParameterCommand}"
-                        CommandParameter="ToggleFullscreen"
+                        CommandParameter="Player.ToggleFullscreen"
                         Grid.Column="4"
                         HorizontalAlignment="Left" 
                         IsEnabled="{Binding Path=IsConnected}"
