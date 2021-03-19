@@ -410,7 +410,9 @@ namespace MPCRemote
         /// </summary>
         /// <param name="command">Command to send</param>
         /// <param name="parameters">Parameters for the command</param>
-        private void SendComamndToClient(string command, string parameters, int index = 0)
+        /// <param name="index">Index if it should be sent</param>
+        /// <param name="targetIndex">Index to target when moving an item</param>
+        private void SendComamndToClient(string command, string parameters, int index = 0, int targetIndex = 0)
         {
             try
             {
@@ -418,7 +420,8 @@ namespace MPCRemote
                 {
                     Command = command,
                     Parameters = parameters,
-                    Index = index
+                    Index = index,
+                    TargetIndex = targetIndex
                 };
 
                 var jsonString = JsonSerializer.Serialize(commandEntry);
@@ -453,6 +456,11 @@ namespace MPCRemote
         /// <param name="dropInfo">DropInfo instance</param>
         public void DragOver(IDropInfo dropInfo)
         {
+            if(!IsConnected)
+            {
+                return;
+            }
+
             // Check if the dropped entry is a file from Windows explorer
             var dataObject = dropInfo.Data as IDataObject;
             if (dataObject != null)
@@ -460,6 +468,12 @@ namespace MPCRemote
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
                 dropInfo.Effects = DragDropEffects.Copy;
                 return;
+            }
+
+            if(dropInfo.Data is PlaylistEntry sourceData && dropInfo.TargetItem is PlaylistEntry targetData)
+            {
+                dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+                dropInfo.Effects = DragDropEffects.Move;
             }
         }
 
@@ -469,7 +483,7 @@ namespace MPCRemote
         /// <param name="dropInfo"></param>
         public void Drop(IDropInfo dropInfo)
         {
-            if(!IsConnected)
+            if (!IsConnected)
             {
                 return;
             }
@@ -482,12 +496,25 @@ namespace MPCRemote
                 {
                     var files = dataObject.GetFileDropList();
                     var insertIndex = dropInfo.InsertIndex;
-                    foreach(var file in files)
+                    foreach (var file in files)
                     {
                         SendComamndToClient("Playlist.InsertEntry", file, insertIndex);
                         Thread.Sleep(100);
                         insertIndex++;
                     }
+                }
+
+                return;
+            }
+
+            if (dropInfo.Data is PlaylistEntry sourceData && dropInfo.TargetItem is PlaylistEntry targetData)
+            {
+                var sourceIndex = Playlist.IndexOf(sourceData);
+                var targetIndex = Playlist.IndexOf(targetData);
+
+                if (sourceData.Filename != targetData.Filename)
+                {
+                    SendComamndToClient("Playlist.MoveEntry", string.Empty, sourceIndex, targetIndex);
                 }
             }
         }

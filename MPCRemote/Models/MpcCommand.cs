@@ -19,5 +19,10 @@
         /// The index of the entry
         /// </summary>
         public int Index { get; set; }
+
+        /// <summary>
+        /// Index used when items in the playlist are moved
+        /// </summary>
+        public int TargetIndex { get; set; }
     }
 }
