@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         mc:Ignorable="d"
@@ -243,7 +244,12 @@
                 <ListBox 
                     ItemsSource="{Binding Path=Playlist}"
                     Grid.Row="1"
-                    SelectedItem="{Binding Path=SelectedEntry}">
+                    SelectedItem="{Binding Path=SelectedEntry}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True" 
+                    dd:DragDrop.DropHandler="{Binding}"
+                    MouseDoubleClick="ListBox_MouseDoubleClick"
+                    x:Name="DataGridPlaylist">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=Filename}" />

@@ -1,14 +1,18 @@
-﻿using Microsoft.Win32;
+﻿using GongSolutions.Wpf.DragDrop;
+using Microsoft.Win32;
 using MPCRemote.Enumerations;
 using MPCRemote.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using VaraniumSharp.Shenfield;
@@ -18,7 +22,7 @@ namespace MPCRemote
     /// <summary>
     /// Class that serves as the context for the MainWindow
     /// </summary>
-    public sealed class RemoteContext : INotifyPropertyChanged
+    public sealed class RemoteContext : INotifyPropertyChanged, IDropTarget
     {
         public RemoteContext()
         {
@@ -186,6 +190,15 @@ namespace MPCRemote
         }
 
         /// <summary>
+        /// Play the file at the selected index
+        /// </summary>
+        public void PlayFileInPlaylist(int indexToPlay)
+        {
+            var file = Playlist[indexToPlay];
+            SendComamndToClient("Playlist.PlayFile", file.Filename);
+        }
+
+        /// <summary>
         /// Sets the state of the buttons
         /// </summary>
         private void SetButtonState()
@@ -244,7 +257,7 @@ namespace MPCRemote
                     {
                         if (exception.InnerException.Message.Contains("closed", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            FeedbackString += "Connection closed by host";
+                            FeedbackString += "Connection closed by host\r\n";
                             CleanupConnection();
                             break;
                         }
@@ -287,6 +300,7 @@ namespace MPCRemote
             PlayerState = string.Empty;
             ApiVersion = "0.0.0";
             DurationInMilliseconds = 100;
+            Playlist.Clear();
             SetButtonState();
         }
 
@@ -432,6 +446,52 @@ namespace MPCRemote
             }
         }
 
+
+        /// <summary>
+        /// Occurs when the user drags something over the listview
+        /// </summary>
+        /// <param name="dropInfo">DropInfo instance</param>
+        public void DragOver(IDropInfo dropInfo)
+        {
+            // Check if the dropped entry is a file from Windows explorer
+            var dataObject = dropInfo.Data as IDataObject;
+            if (dataObject != null)
+            {
+                dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+                dropInfo.Effects = DragDropEffects.Copy;
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Occurs when the user drops something over the listview
+        /// </summary>
+        /// <param name="dropInfo"></param>
+        public void Drop(IDropInfo dropInfo)
+        {
+            if(!IsConnected)
+            {
+                return;
+            }
+
+            // Handle file drop from Windows explorer
+            var dataObject = dropInfo.Data as DataObject;
+            if (dataObject != null)
+            {
+                if (dataObject != null && dataObject.ContainsFileDropList())
+                {
+                    var files = dataObject.GetFileDropList();
+                    var insertIndex = dropInfo.InsertIndex;
+                    foreach(var file in files)
+                    {
+                        SendComamndToClient("Playlist.InsertEntry", file, insertIndex);
+                        Thread.Sleep(100);
+                        insertIndex++;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Socket used for connecting to the server
         /// </summary>
@@ -447,7 +507,7 @@ namespace MPCRemote
         /// </summary>
         private string _ipAddress;
 
-                /// <summary>
+        /// <summary>
         /// Backing variable for <see cref="Port"/>
         /// </summary>
         private int? _port;

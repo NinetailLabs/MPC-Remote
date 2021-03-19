@@ -56,5 +56,11 @@ namespace MPCRemote
         {
             _movingSlider = false;
         }
+
+        private void ListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var itemIndex = DataGridPlaylist.SelectedIndex;
+            _context.PlayFileInPlaylist(itemIndex);
+        }
     }
 }
