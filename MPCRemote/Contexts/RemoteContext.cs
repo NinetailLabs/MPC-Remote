@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using MPCRemote.Enumerations;
 using MPCRemote.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -186,7 +185,7 @@ namespace MPCRemote
         /// <param name="newPosition">The position to seek to</param>
         public void SeekToPosition(long newPosition)
         {
-            SendComamndToClient("Player.SeekTo", newPosition.ToString());
+            SendComamndToClient(MpcCommands.SeekTo, newPosition.ToString());
         }
 
         /// <summary>
@@ -195,7 +194,7 @@ namespace MPCRemote
         public void PlayFileInPlaylist(int indexToPlay)
         {
             var file = Playlist[indexToPlay];
-            SendComamndToClient("Playlist.PlayFile", file.Filename);
+            SendComamndToClient(MpcCommands.PlayPlaylistFile, file.Filename);
         }
 
         /// <summary>
@@ -208,20 +207,20 @@ namespace MPCRemote
                 && !IsConnected;
 
             EnablePlay = IsConnected
-                && PlayerState != "Loading"
-                && PlayerState != "Playing"
-                && PlayerState != "Closed";
+                && PlayerState != PlayerStates.Loading
+                && PlayerState != PlayerStates.Playing
+                && PlayerState != PlayerStates.Closed;
 
             EnablePause = IsConnected
-                && PlayerState == "Playing";
+                && PlayerState == PlayerStates.Playing;
 
             EnableStop = IsConnected
-                && (PlayerState == "Playing"
-                    || PlayerState == "Paused");
+                && (PlayerState == PlayerStates.Playing
+                    || PlayerState == PlayerStates.Paused);
 
             EnableProgressBar = IsConnected
-                && (PlayerState == "Playing"
-                    || PlayerState == "Paused");
+                && (PlayerState == PlayerStates.Playing
+                    || PlayerState == PlayerStates.Paused);
 
             EnableRemoveButton = IsConnected
                 && SelectedEntry != null;
@@ -286,7 +285,7 @@ namespace MPCRemote
         private void RemoveEntryFromPlaylist()
         {
             var index = Playlist.IndexOf(SelectedEntry);
-            SendComamndToClient("Playlist.RemoveEntry", string.Empty, index);
+            SendComamndToClient(MpcCommands.RemovePlaylistEntry, string.Empty, index);
         }
 
         /// <summary>
@@ -309,7 +308,7 @@ namespace MPCRemote
         /// </summary>
         private void DisconnectFromHost()
         {
-            SendComamndToClient("Player.OSD", "Remote disconnected");
+            SendComamndToClient(MpcCommands.ShowOnScreenMessage, "Remote disconnected");
             _server.Close();
         }
 
@@ -326,7 +325,7 @@ namespace MPCRemote
                     SetButtonState();
                     if(IsConnected)
                     {
-                        SendComamndToClient("API.GetVersion", string.Empty);
+                        SendComamndToClient(MpcCommands.GetApiVersion, string.Empty);
                     }
                     break;
                 case "Player.StateChanged":
@@ -337,7 +336,7 @@ namespace MPCRemote
                     break;
                 case "API.Version":
                     ApiVersion = command.Parameters.Version;
-                    SendComamndToClient("Player.GetStatus", string.Empty);
+                    SendComamndToClient(MpcCommands.GetPlayerStatus, string.Empty);
                     break;
                 case "Player.Fullscreen":
                     FullscreenText = command.Parameters.IsFullscreen
@@ -387,7 +386,6 @@ namespace MPCRemote
                 var durationSpan = TimeSpan.FromMilliseconds(duration);
                 Position = $"{positionSpan.Hours:00}:{positionSpan.Minutes:00}:{positionSpan.Seconds:00}\\{durationSpan.Hours:00}:{durationSpan.Minutes:00}:{durationSpan.Seconds:00}";
                 
-                var newProgress = (int)(Math.Round((position / (decimal)duration) * 100, 0));
                 DurationInMilliseconds = duration;
                 PositionInMilliseconds = position;
             }
@@ -498,7 +496,7 @@ namespace MPCRemote
                     var insertIndex = dropInfo.InsertIndex;
                     foreach (var file in files)
                     {
-                        SendComamndToClient("Playlist.InsertEntry", file, insertIndex);
+                        SendComamndToClient(MpcCommands.InsertPlaylistEntry, file, insertIndex);
                         Thread.Sleep(100);
                         insertIndex++;
                     }
@@ -519,7 +517,7 @@ namespace MPCRemote
 
                 if (sourceData.Filename != targetData.Filename)
                 {
-                    SendComamndToClient("Playlist.MoveEntry", string.Empty, sourceIndex, targetIndex);
+                    SendComamndToClient(MpcCommands.MovePlaylistEntry, string.Empty, sourceIndex, targetIndex);
                 }
             }
         }
