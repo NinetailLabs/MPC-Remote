@@ -125,18 +125,17 @@
                 </Grid>
 
                 <Slider 
-                Grid.Row="2"
-                Grid.RowSpan="2"
-                HorizontalAlignment="Right" 
-                IsEnabled="{Binding Path=EnableProgressBar}"
-                Margin="0,22,10,0"
-                Maximum="{Binding Path=DurationInMilliseconds}"
-                Value="{Binding Path=PositionInMilliseconds}"
-                PreviewMouseDown="Slider_PreviewMouseDown"
-                PreviewMouseUp="Slider_PreviewMouseUp"
-                ValueChanged="Slider_ValueChanged"
-                VerticalAlignment="Top" 
-                Width="780" Height="31" />
+                    Grid.Row="2"
+                    Grid.RowSpan="2" 
+                    IsEnabled="{Binding Path=EnableProgressBar}"
+                    Margin="10,22,10,0"
+                    Maximum="{Binding Path=DurationInMilliseconds}"
+                    Value="{Binding Path=PositionInMilliseconds}"
+                    PreviewMouseDown="Slider_PreviewMouseDown"
+                    PreviewMouseUp="Slider_PreviewMouseUp"
+                    ValueChanged="Slider_ValueChanged"
+                    VerticalAlignment="Top" 
+                    Height="31" />
 
                 <Grid
                 Grid.Row="4"
@@ -258,7 +257,7 @@
                 </ListBox>
 
             </Grid>
-            
+
         </Border>
 
 
