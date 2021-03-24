@@ -28,7 +28,7 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="28" />
-                    <RowDefinition />
+                    <RowDefinition Height="70" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
@@ -47,45 +47,45 @@
                     Grid.Column="0"
                     Margin="10,20,10,10"/>
                     <TextBox
-                    Text="{Binding Path=IpAddress}"
-                    Margin="85,15,10,13" />
+                        Text="{Binding Path=IpAddress}"
+                        Margin="85,15,10,13" />
 
                     <Label
-                    Content="Port:"
-                    Grid.Column="1"
-                    Margin="10,20,10,10"/>
+                        Content="Port:"
+                        Grid.Column="1"
+                        Margin="10,20,10,10"/>
                     <TextBox
-                    Grid.Column="1"
-                    Margin="50,15,10,13"
-                    Text="{Binding Path=Port}" />
+                        Grid.Column="1"
+                        Margin="50,15,10,13"
+                        Text="{Binding Path=Port}" />
 
 
                     <Button 
-                    Content="Connect"
-                    Command="{Binding Path=ConnectCommand}"
-                    Grid.Column="2"
-                    HorizontalAlignment="Left" 
-                    IsEnabled="{Binding Path=EnableConnectButton}"
-                    Margin="10,15,0,0" 
-                    VerticalAlignment="Top"/>
+                        Content="Connect"
+                        Command="{Binding Path=ConnectCommand}"
+                        Grid.Column="2"
+                        HorizontalAlignment="Left" 
+                        IsEnabled="{Binding Path=EnableConnectButton}"
+                        Margin="10,15,0,0" 
+                        VerticalAlignment="Top"/>
 
                     <Button 
-                    Content="Disconnect"
-                    Command="{Binding Path=DisconnectCommand}"
-                    Grid.Column="2"
-                    HorizontalAlignment="Left" 
-                    IsEnabled="{Binding Path=IsConnected}"
-                    Margin="85,15,0,0" 
-                    VerticalAlignment="Top"/>
+                        Content="Disconnect"
+                        Command="{Binding Path=DisconnectCommand}"
+                        Grid.Column="2"
+                        HorizontalAlignment="Left" 
+                        IsEnabled="{Binding Path=IsConnected}"
+                        Margin="85,15,0,0" 
+                        VerticalAlignment="Top"/>
 
                     <Label
-                    Content="API v"
-                    Grid.Column="3"
-                    Margin="10,20,0,0"/>
+                        Content="API v"
+                        Grid.Column="3"
+                        Margin="10,20,0,0"/>
                     <Label
-                    Content="{Binding Path=ApiVersion}"
-                    Grid.Column="3"
-                    Margin="42,20,0,0"/>
+                        Content="{Binding Path=ApiVersion}"
+                        Grid.Column="3"
+                        Margin="42,20,0,0"/>
                 </Grid>
 
                 <Label
@@ -105,22 +105,22 @@
                     </Grid.ColumnDefinitions>
 
                     <Label
-                    Content="State"
-                    Grid.Column="0"
-                    Margin="10,0,0,0"/>
+                        Content="State"
+                        Grid.Column="0"
+                        Margin="10,0,0,0"/>
                     <Label
-                    Content="{Binding Path=PlayerState}"
-                    Grid.Column="0"
-                    Margin="50,0,0,0"/>
+                        Content="{Binding Path=PlayerState}"
+                        Grid.Column="0"
+                        Margin="50,0,0,0"/>
 
                     <Label
-                    Content="Position"
-                    Grid.Column="1"
-                    Margin="10,0,0,0"/>
+                        Content="Position"
+                        Grid.Column="1"
+                        Margin="10,0,0,0"/>
                     <Label
-                    Content="{Binding Path=Position}"
-                    Grid.Column="1"
-                    Margin="65,0,0,0"/>
+                        Content="{Binding Path=Position, IsAsync=True}"
+                        Grid.Column="1"
+                        Margin="65,0,0,0"/>
 
                 </Grid>
 
@@ -205,10 +205,12 @@
 
                 </Grid>
 
-                <TextBlock
-                    Grid.Row="4"
-                    Margin="10,148,0,0"
-                    Text="{Binding Path=FeedbackString}" Grid.RowSpan="2" />
+                <ScrollViewer
+                    Grid.Row="5">
+                    <TextBlock
+                        Margin="10"
+                        Text="{Binding Path=FeedbackString}" />
+                </ScrollViewer>
 
             </Grid>
         </Border>
