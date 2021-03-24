@@ -26,13 +26,16 @@ namespace MPCRemote
         public RemoteContext()
         {
             // TODO - For quick access
-            IpAddress = "127.0.0.1";
+            _ipAddress = "127.0.0.1";
             Port = 13580;
             SetButtonState();
             FeedbackString = string.Empty;
             ApiVersion = "0.0.0";
             FullscreenText = "Fullscreen";
             DurationInMilliseconds = 100;
+            File = string.Empty;
+            PlayerState = string.Empty;
+            Position = string.Empty;
 
             Playlist = new ObservableCollection<PlaylistEntry>();
             BindingOperations.EnableCollectionSynchronization(Playlist, _playlistLock);
@@ -525,12 +528,12 @@ namespace MPCRemote
         /// <summary>
         /// Socket used for connecting to the server
         /// </summary>
-        private Socket _server;
+        private Socket? _server;
 
         /// <summary>
         /// Writer used to write data to the remote endpoint
         /// </summary>
-        private StreamWriter _streamWriter;
+        private StreamWriter? _streamWriter;
 
         /// <summary>
         /// Backing variable for <see cref="IPAddress"/>
