@@ -555,6 +555,6 @@ namespace MPCRemote
         /// <summary>
         /// Occurs when a property is changed
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

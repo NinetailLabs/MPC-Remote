@@ -11,7 +11,7 @@ namespace MPCRemote
         {
             InitializeComponent();
             _context = new RemoteContext();
-            DataContext = _context;            
+            DataContext = _context;
         }
 
         /// <summary>
