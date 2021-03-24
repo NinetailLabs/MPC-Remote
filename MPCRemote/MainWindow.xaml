@@ -120,7 +120,7 @@
                     <TextBlock
                         Grid.Column="1"
                         Margin="65,0,0,0"
-                        Text="{Binding Path=Position}"/>
+                        x:Name="PositionDisplay" />
 
                 </Grid>
 

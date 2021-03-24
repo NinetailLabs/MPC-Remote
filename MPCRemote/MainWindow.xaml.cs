@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Threading;
+using System.Windows;
 
 namespace MPCRemote
 {
@@ -11,8 +13,31 @@ namespace MPCRemote
         {
             InitializeComponent();
             _context = new RemoteContext();
+            _lastPosition = string.Empty;
             DataContext = _context;
+
+            _updateTimer = new Timer(UpdateCallback, null, TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.5));
         }
+
+        /// <summary>
+        /// Occurs when the update timer elapses
+        /// </summary>
+        /// <param name="obj">Always null</param>
+        private void UpdateCallback(object? obj)
+        {
+            if(_lastPosition.Equals(_context.Position))
+            {
+                return;
+            }
+
+            Dispatcher.Invoke(() =>
+            {
+                PositionDisplay.Text = _context.Position;
+                _lastPosition = _context.Position;
+            });
+        }
+
+        private string _lastPosition;
 
         /// <summary>
         /// Occurs when the user changes the slider value
@@ -38,6 +63,11 @@ namespace MPCRemote
         private bool _movingSlider;
 
         /// <summary>
+        /// Timer used to update the position
+        /// </summary>
+        private Timer _updateTimer;
+
+        /// <summary>
         /// Occurs when the user clicks on the slider
         /// </summary>
         /// <param name="sender">Sender of the event</param>
@@ -57,6 +87,11 @@ namespace MPCRemote
             _movingSlider = false;
         }
 
+        /// <summary>
+        /// Occurs when the user double clicks on a listbox entry
+        /// </summary>
+        /// <param name="sender">Sender of the event</param>
+        /// <param name="e">Event arguments</param>
         private void ListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var itemIndex = DataGridPlaylist.SelectedIndex;

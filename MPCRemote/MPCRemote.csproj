@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="gong-wpf-dragdrop" Version="2.3.2" />
-    <PackageReference Include="ModernWpfUI" Version="0.9.3" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.3.2" />
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.3.3" />
     <PackageReference Include="VaraniumSharp.Shenfield" Version="2.1.2" />
   </ItemGroup>
 
