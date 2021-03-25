@@ -16,7 +16,7 @@ namespace MPCRemote
             _lastPosition = string.Empty;
             DataContext = _context;
 
-            _updateTimer = new Timer(UpdateCallback, null, TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.5));
+            _updateTimer = new Timer(UpdateCallback, null, TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
         }
 
         /// <summary>
