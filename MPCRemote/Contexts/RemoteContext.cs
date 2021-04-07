@@ -311,8 +311,7 @@ namespace MPCRemote
         /// </summary>
         private void DisconnectFromHost()
         {
-            SendComamndToClient(MpcCommands.ShowOnScreenMessage, "Remote disconnected");
-            _server.Close();
+            _server?.Close();
         }
 
         /// <summary>
